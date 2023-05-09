@@ -17,7 +17,15 @@
         "command": "tab-groups.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "tab-groups",
+          "name": "Tab Groups"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
