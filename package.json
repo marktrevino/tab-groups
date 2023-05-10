@@ -12,20 +12,44 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsWelcome": [
+      {
+        "view": "tab-groups",
+        "contents": "No saved tab groups.\n[Save current tabs as a group](command:tab-groups.helloWorld)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "tab-groups",
+          "title": "Tab Groups",
+          "icon": "src/assets/tab-groups.svg"
+        }
+      ]
+    },
+    "views": {
+      "tab-groups": [{
+        "id": "tab-groups",
+        "name": "Tab Groups"
+      }],
+      "explorer": [
+        {
+          "id": "tab-groups-explorer",
+          "name": "Tab Groups"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "tab-groups.helloWorld",
         "title": "Hello World"
       }
     ],
-    "views": {
-      "explorer": [
-        {
-          "id": "tab-groups",
-          "name": "Tab Groups"
-        }
-      ]
-    }
+    "configuration": [
+      {
+        "title": "Tab Groups"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
