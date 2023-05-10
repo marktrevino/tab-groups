@@ -1,24 +1,19 @@
 import { TabGroup, Tab, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { GroupTreeItem } from "./GroupTreeItem";
+import { FileTreeItem } from "./FileTreeItem";
 
 type TreeItemData = TabGroup | Tab;
 
-export enum TreeItemType {
-    group = 'group', file = 'file'
-}
-
 export class CustomTreeItem extends TreeItem {
-    // protected type: TreeItemType;
-    protected data: TreeItemData;
-    protected name: string;
     protected tracking?: boolean;
     private parent?: CustomTreeItem;
 
     constructor(
         public readonly label: string,
         public readonly collapsibleState: TreeItemCollapsibleState,
-        protected type: TreeItemType, data: TreeItemData, 
-        extra?: {
-            name?: string, 
+        protected type: GroupTreeItem | FileTreeItem,
+        protected data: TreeItemData, 
+        extra?: { 
             parent?: CustomTreeItem, 
             tracking?: boolean
         }
@@ -28,7 +23,6 @@ export class CustomTreeItem extends TreeItem {
         this.type = type;
         this.data = data;
         this.parent = extra?.parent;
-        this.name = extra?.name ?? '';
         this.tracking = extra?.tracking;
     }
 
@@ -37,10 +31,7 @@ export class CustomTreeItem extends TreeItem {
     }
 
     getText() {
-        if (this.type === TreeItemType.file) {
-            return this.label;
-        }
-        return this.name;
+        return this.label;
     }
 
     getData() {
@@ -56,6 +47,6 @@ export class CustomTreeItem extends TreeItem {
     }
 
     toString() {
-        return `${this.type}: ${this.name}`;
+        return `${this.type}: ${this.label}`;
     }
 }

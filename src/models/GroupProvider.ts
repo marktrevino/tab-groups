@@ -7,12 +7,12 @@ TreeDataProvider,
 TreeItem,
 TreeItemCollapsibleState,
 ProviderResult,
-Tab,
 TabGroup} from 'vscode';
 import * as path from 'path';
-import { CustomTreeItem, TreeItemType } from './models/CustomTreeItem';
-import { CommandNames } from './constants';
-import { GroupTreeItem } from './models/GroupTreeItem';
+import { CustomTreeItem } from './CustomTreeItem';
+import { commandNames, CustomTreeItemType } from '../constants';
+import { GroupTreeItem } from './GroupTreeItem';
+import { FileTreeItem } from './FileTreeItem';
 
 export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
     groups: { [key: string]: TabGroup };
@@ -23,26 +23,22 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
 
     constructor() {
         this.groups = {};
-        console.log('1');
-        window.tabGroups.all.map(group => this.groups['testing'] = group);
-        new GroupTreeItem(this.groups['testing'], 'testing', false);
     }
 
     getTreeItem(element: CustomTreeItem): TreeItem {
-        console.log('howdy');
         const item = new TreeItem(element.getText(), element.getCollapsibleState());
-        item.contextValue = element.getType();
-        console.log(element.getType());
-        if(element.getType() === 'group') {
+        if(element instanceof GroupTreeItem) {
+            console.log('group');
             item.command = {
-                command: CommandNames.HelloWorld,
+                command: commandNames.openFile,
                 title: 'Restore Group',
                 arguments: [element],
             };
         }
-        if(element.getType() === 'file') {
+        if(element instanceof FileTreeItem) {
+            console.log('file');
             item.command = {
-                command: CommandNames.HelloWorld,
+                command: commandNames.openFile,
                 title: 'Open file',
                 arguments: [element],
             };
@@ -62,18 +58,17 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
             // //go through all of the groups and display them
             // return Promise.resolve(group.map(tab => new CustomTreeItem(tab.label,TreeItemCollapsibleState.None, TreeItemType.file, tab, { parent: element })));
         }
-        if(element.getType() === 'group') {
-            console.log('testing again');
-            const name = (element as GroupTreeItem).getName();
+        if(element.getType() === CustomTreeItemType.group) {
+            const name = (element as GroupTreeItem).getText();
             const group = this.groups[name];
-            console.log(group);
-            return Promise.resolve(group.tabs.map(tab => new CustomTreeItem(tab.label,TreeItemCollapsibleState.None, TreeItemType.file, tab, { parent: element })));
+            return Promise.resolve(group.tabs.map(tab => new FileTreeItem(tab, tab.label, element as GroupTreeItem)));
         }
         return Promise.resolve([]);
     }
 
-    addGroup(name: string, tabs: TabGroup): void {
+    add(name: string, tabs: TabGroup): void {
         this.groups[name] = tabs;
+        // window.tabGroups.all.map(group => this.groups['testing'] = group);
         this._onDidChangeTreeData.fire();
     }
 

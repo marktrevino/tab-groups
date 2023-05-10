@@ -43,6 +43,18 @@
       {
         "command": "tab-groups.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "tab-groups.saveGroup",
+        "title": "Save Group"
+      },
+      {
+        "command": "tab-groups.addToGroup",
+        "title": "Add to Group"
+      },
+      {
+        "command": "tab-groups.openFile",
+        "title": "Open File"
       }
     ],
     "configuration": [

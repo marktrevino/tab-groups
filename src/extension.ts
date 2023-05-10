@@ -1,8 +1,9 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import { commands, window, ExtensionContext, workspace } from 'vscode';
-import { CommandNames } from './constants';
-import { GroupProvider } from './groupProvider';
+import { commandNames } from './constants';
+import { GroupProvider } from './models/GroupProvider';
+import { addToGroup, openFile, saveGroup } from './utils';
+import { CustomTreeItem } from './models/CustomTreeItem';
+import { FileTreeItem } from './models/FileTreeItem';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -13,18 +14,19 @@ export function activate(context: ExtensionContext) {
     const rootPath = (workspace.workspaceFolders && (workspace.workspaceFolders.length > 0))
         ? workspace.workspaceFolders[0].uri.fsPath : undefined;
     // window.tabGroups.all.forEach((group) => { group.tabs.forEach((tab) => { console.log(tab.label); }); });
-    console.log('rootPath', rootPath);
-    const groupProviders = new GroupProvider();
+    // console.log('rootPath', rootPath);
+    const groups = new GroupProvider();
 
-    window.registerTreeDataProvider('tab-groups', groupProviders);
-    window.registerTreeDataProvider('tab-groups-explorer', groupProviders);
+    window.registerTreeDataProvider('tab-groups', groups);
+    window.registerTreeDataProvider('tab-groups-explorer', groups);
 
     let disposable = [
-        commands.registerCommand(CommandNames.HelloWorld, () => {
+        commands.registerCommand(commandNames.helloWorld, () => {
         window.showInformationMessage('Hello World from tab-groups!');
     }),
-        commands.registerCommand(CommandNames.Save, () => {
-    }),
+        commands.registerCommand(commandNames.save, () => saveGroup(groups)),
+        commands.registerCommand(commandNames.addToGroup, () => addToGroup(groups)),
+        commands.registerCommand(commandNames.openFile, async (item: FileTreeItem) => openFile(item))
     ];
 
     context.subscriptions.concat(disposable);
