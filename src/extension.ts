@@ -17,6 +17,7 @@ export function activate(context: ExtensionContext) {
     const groupProviders = new GroupProvider();
 
     window.registerTreeDataProvider('tab-groups', groupProviders);
+    window.registerTreeDataProvider('tab-groups-explorer', groupProviders);
 
     let disposable = [
         commands.registerCommand(CommandNames.HelloWorld, () => {
