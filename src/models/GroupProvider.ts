@@ -28,7 +28,7 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
     getTreeItem(element: CustomTreeItem): TreeItem {
         const item = new TreeItem(element.getText(), element.getCollapsibleState());
         if(element instanceof GroupTreeItem) {
-            console.log('group');
+            // console.log(`group '${element.label}' created!`);
             item.command = {
                 command: commandNames.openFile,
                 title: 'Restore Group',
@@ -36,7 +36,7 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
             };
         }
         if(element instanceof FileTreeItem) {
-            console.log('file');
+            // console.log(`${element.label} was added to group '${element.getParent()?.label}'`);
             item.command = {
                 command: commandNames.openFile,
                 title: 'Open file',

@@ -6,5 +6,4 @@ export class FileTreeItem extends CustomTreeItem {
     constructor(data: Tab, label: string, parent: GroupTreeItem) {
         super(label, TreeItemCollapsibleState.None, data, { parent } );
     }
-
 }
