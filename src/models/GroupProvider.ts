@@ -10,7 +10,7 @@ ProviderResult,
 TabGroup} from 'vscode';
 import * as path from 'path';
 import { CustomTreeItem } from './CustomTreeItem';
-import { commandNames, CustomTreeItemType } from '../constants';
+import { commandNames } from '../constants';
 import { GroupTreeItem } from './GroupTreeItem';
 import { FileTreeItem } from './FileTreeItem';
 
@@ -58,7 +58,7 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
             // //go through all of the groups and display them
             // return Promise.resolve(group.map(tab => new CustomTreeItem(tab.label,TreeItemCollapsibleState.None, TreeItemType.file, tab, { parent: element })));
         }
-        if(element.getType() === CustomTreeItemType.group) {
+        if(element instanceof GroupTreeItem) {
             const name = (element as GroupTreeItem).getText();
             const group = this.groups[name];
             return Promise.resolve(group.tabs.map(tab => new FileTreeItem(tab, tab.label, element as GroupTreeItem)));

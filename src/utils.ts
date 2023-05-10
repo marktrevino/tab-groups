@@ -1,7 +1,5 @@
 import { window } from "vscode";
 import { GroupProvider } from "./models/GroupProvider";
-import { CustomTreeItem } from "./models/CustomTreeItem";
-import { CustomTreeItemType } from "./constants";
 import { FileTreeItem } from "./models/FileTreeItem";
 
 export async function saveGroup(groupProvider: GroupProvider): Promise<boolean> {
