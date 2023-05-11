@@ -39,6 +39,24 @@
         }
       ]
     },
+    "menus": {
+      "view/title": [
+        {
+          "command": "tab-groups.saveGroup",
+          "when": "view == tab-groups"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "tab-groups.helloWorld",
+          "when": "view == tab-groups && viewItem == filetreeitem"
+        },
+        { 
+          "command": "tab-groups.helloWorld",
+          "when": "view == explorer && viewItem == grouptreeitem"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "tab-groups.helloWorld",
