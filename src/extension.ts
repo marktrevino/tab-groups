@@ -1,7 +1,7 @@
 import { commands, window, ExtensionContext, workspace } from 'vscode';
 import { commandNames } from './constants';
 import { GroupProvider } from './models/GroupProvider';
-import { addToGroup, openFile, saveGroup } from './utils';
+import { addToGroup, deleteFromGroup, deleteGroup, openFile, saveGroup } from './utils';
 import { CustomTreeItem } from './models/CustomTreeItem';
 import { FileTreeItem } from './models/FileTreeItem';
 
@@ -26,7 +26,9 @@ export function activate(context: ExtensionContext) {
     }),
         commands.registerCommand(commandNames.save, () => saveGroup(groups)),
         commands.registerCommand(commandNames.addToGroup, () => addToGroup(groups)),
-        commands.registerCommand(commandNames.openFile, async (item: FileTreeItem) => openFile(item))
+        commands.registerCommand(commandNames.openFile, async (item: FileTreeItem) => openFile(item)),
+        commands.registerCommand(commandNames.deleteGroup, async () => deleteGroup(groups)),
+        commands.registerCommand(commandNames.deleteFromGroup, async () => deleteFromGroup(groups))
     ];
 
     context.subscriptions.concat(disposable);

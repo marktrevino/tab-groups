@@ -72,6 +72,11 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
         this._onDidChangeTreeData.fire();
     }
 
+    delete(name: string): void {
+        delete this.groups[name];
+        this._onDidChangeTreeData.fire();
+    }
+
 /**
  * Get group from the active tabs
  */

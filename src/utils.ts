@@ -63,3 +63,25 @@ export async function openFile(item: FileTreeItem): Promise<void> {
     return;
 
 }
+
+export async function deleteGroup(groupProvider: GroupProvider): Promise<boolean> {
+    let name = await window.showInputBox({
+        placeHolder: 'Please enter the name of the group you would like to delete'    
+    });
+
+    if (name === undefined) { return false; }
+    window.tabGroups.all.map(group => groupProvider.delete(name ?? ''));
+
+    return true;
+};
+
+export async function deleteFromGroup(item: FileTreeItem): Promise<boolean> {
+    let name = await window.showInputBox({
+        placeHolder: 'Please enter the name of the file you would like to delete from tab'    
+    });
+
+    if (name === undefined) { return false; }
+    window.tabGroups.all.map(group => groupProvider.delete(name ?? ''));
+
+    return true;
+};

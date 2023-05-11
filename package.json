@@ -55,6 +55,14 @@
       {
         "command": "tab-groups.openFile",
         "title": "Open File"
+      },
+      {
+        "command": "tab-groups.deleteGroup",
+        "title": "Delete Group"
+      },
+      {
+        "command": "tab-groups.deleteFromGroup",
+        "title": "Delete From Group"
       }
     ],
     "configuration": [
