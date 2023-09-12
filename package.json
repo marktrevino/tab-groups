@@ -12,20 +12,82 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
+    "viewsWelcome": [
       {
-        "command": "tab-groups.helloWorld",
-        "title": "Hello World"
+        "view": "tab-groups",
+        "contents": "No saved tab groups.\n[Create a group](command:tab-groups.createGroup)"
       }
     ],
-    "views": {
-      "explorer": [
+    "viewsContainers": {
+      "activitybar": [
         {
           "id": "tab-groups",
+          "title": "Tab Groups",
+          "icon": "src/assets/tab-groups.svg"
+        }
+      ]
+    },
+    "views": {
+      "tab-groups": [{
+        "id": "tab-groups",
+        "name": "Tab Groups"
+      }],
+      "explorer": [
+        {
+          "id": "tab-groups-explorer",
           "name": "Tab Groups"
         }
       ]
-    }
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "tab-groups.saveGroup",
+          "when": "view == tab-groups"
+        },
+        {
+          "command": "tab-groups.createGroup",
+          "when": "view == tab-groups"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "tab-groups.helloWorld",
+          "when": "view == tab-groups && viewItem == filetreeitem"
+        },
+        { 
+          "command": "tab-groups.helloWorld",
+          "when": "view == explorer && viewItem == grouptreeitem"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "tab-groups.helloWorld",
+        "title": "tab-groups: Hello World"
+      },
+      {
+        "command": "tab-groups.saveGroup",
+        "title": "tab-groups: Save Group"
+      },
+      {
+        "command": "tab-groups.addToGroup",
+        "title": "tab-groups: Add to Group"
+      },
+      {
+        "command": "tab-groups.openFile",
+        "title": "tab-groups: Open File"
+      },
+      {
+        "command": "tab-groups.createGroup",
+        "title": "tab-groups: Create Group"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "Tab Groups"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
