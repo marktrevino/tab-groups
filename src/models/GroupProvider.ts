@@ -64,11 +64,11 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
     }
 
     /**
-     * Adds a group with tabs to the tree view
+     * Adds multiple tabs to a group
      * @param groupName the name of the group
      * @param tabs the tabs to add
      */
-    add(groupName: string, tabs: TabGroup): void {
+    addTabsToGroup(groupName: string, tabs: TabGroup): void {
         this.groups[groupName] = tabs;
         this._onDidChangeTreeData.fire();
     }

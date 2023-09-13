@@ -14,17 +14,45 @@ export async function createGroup(groupProvider: GroupProvider): Promise<boolean
     return true;
 }
 
-export async function saveGroup(groupProvider: GroupProvider): Promise<boolean> {
-    let name = await window.showInputBox({
-        placeHolder: 'Please enter a name for the group'    
-    });
+export async function saveAllOpenTabsToGroup(groupProvider: GroupProvider): Promise<boolean> {
+    if (isSavedGroupsEmpty(groupProvider)) {
+        let name = await window.showInputBox({
+            placeHolder: 'You dont have any groups yet, please enter a name for a new group'    
+        });
 
-    if (name === undefined) { return false; }
+        if (name === undefined) { return false; }
+        window.tabGroups.all.map(group => {
+            groupProvider.addTabsToGroup(name as string, group);
+            // TODO (marktrevino): PREVENT GROUPS FROM BEING OVERWRITTEN WHEN SPLIT VIEW IS USED
+        });
+    } else {
+        let quickPickOptions = Object.keys(groupProvider.groups);
+        quickPickOptions.push('Create New Group');
 
-    window.tabGroups.all.map(group => {
-        groupProvider.add(name as string, group);
-        // TODO (marktrevino): PREVENT GROUPS FROM BEING OVERWRITTEN WHEN SPLIT VIEW IS USED
-    });
+        let name = await window.showQuickPick(quickPickOptions, {
+            placeHolder: 'Please select the group you would like to add the tabs to or create a new group'
+        });
+
+        if (name === undefined) { return false; }
+        if (name === 'Create New Group') {
+            let newGroupName = await window.showInputBox({
+                placeHolder: 'Please enter a name for your new group!'    
+            });
+
+            if (newGroupName === undefined) { return false; }
+
+            groupProvider.addEmptyGroup(newGroupName);
+            window.tabGroups.all.map(group => {
+                groupProvider.addTabsToGroup(newGroupName as string, group);
+                // TODO (marktrevino): PREVENT GROUPS FROM BEING OVERWRITTEN WHEN SPLIT VIEW IS USED
+            });
+        } else {
+            window.tabGroups.all.map(group => {
+                groupProvider.addTabsToGroup(name as string, group);
+                // TODO (marktrevino): PREVENT GROUPS FROM BEING OVERWRITTEN WHEN SPLIT VIEW IS USED
+            });
+        }
+    }
 
     return true;
 }
@@ -38,7 +66,7 @@ export async function addToGroup(groupProvider: GroupProvider): Promise<boolean>
         placeHolder: 'Please select the file you would like to add to a group',
     });
 
-    if(Object.keys(groupProvider.groups).length === 0) {
+    if(isSavedGroupsEmpty(groupProvider)) {
         let groupName = await window.showInputBox({
             placeHolder: 'You dont have any groups yet, please enter a name for a new group'
         });
@@ -106,4 +134,8 @@ function getTabFromTabGroups(tabString: string): Tab | undefined {
     let tabGroups = tabGroupsArray.map(tabGroup => tabGroup.tabs);
     let tab = tabGroups.find(tabArray => tabArray?.find(tab => tab.label === tabString))?.find(tab => tab.label === tabString);
     return tab;
+}
+
+function isSavedGroupsEmpty(groupProvider: GroupProvider): boolean {
+    return  Object.keys(groupProvider.groups).length === 0;
 }

@@ -1,7 +1,7 @@
 import { commands, window, ExtensionContext, workspace } from 'vscode';
 import { commandNames } from './constants';
 import { GroupProvider } from './models/GroupProvider';
-import { addToGroup, createGroup, openFile, saveGroup } from './utils';
+import { addToGroup, createGroup, openFile, saveAllOpenTabsToGroup } from './utils';
 import { FileTreeItem } from './models/FileTreeItem';
 
 // This method is called when your extension is activated
@@ -21,9 +21,9 @@ export function activate(context: ExtensionContext) {
         commands.registerCommand(commandNames.helloWorld, () => {
         window.showInformationMessage('Hello World from tab-groups!');
     }),
-        commands.registerCommand(commandNames.save, () => saveGroup(groupProvider)),
+        commands.registerCommand(commandNames.saveAllOpenTabsToGroup, () => saveAllOpenTabsToGroup(groupProvider)),
+        commands.registerCommand(commandNames.saveTabToGroup, () => addToGroup(groupProvider)),
         commands.registerCommand(commandNames.createGroup, () => createGroup(groupProvider)),
-        commands.registerCommand(commandNames.addToGroup, () => addToGroup(groupProvider)),
         commands.registerCommand(commandNames.openFile, async (item: FileTreeItem) => openFile(item))
     ];
 
