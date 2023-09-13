@@ -95,6 +95,43 @@ export async function openFile(item: FileTreeItem): Promise<void> {
 
 }
 
+export async function deleteGroup(groupProvider: GroupProvider): Promise<boolean> {
+    let groupNames = [];
+    for (let key in groupProvider.groups) {
+        groupNames.push(key);
+    }
+
+    let groupToDelete = await window.showQuickPick(groupNames, {
+        placeHolder: 'Please select the group you would like to delete'
+    });
+
+    groupProvider.deleteGroup(groupToDelete as string);
+    return true;
+}
+
+export async function deleteTabFromGroup(groupProvider: GroupProvider): Promise<boolean> {
+    let groupNames = [];
+    for (let key in groupProvider.groups) {
+        groupNames.push(key);
+    }
+
+    let groupToDeleteFrom = await window.showQuickPick(groupNames, {
+        placeHolder: 'Please select the group you would like to delete a file from'
+    });
+
+    let tabs = groupProvider.groups[groupToDeleteFrom as string].tabs;
+
+    let tabNames = tabs?.map(tab => tab.label);
+
+    let tabToDelete = await window.showQuickPick(tabNames as string[], {
+        placeHolder: 'Please select the file you would like to delete from a group',
+    });
+
+    groupProvider.deleteTabFromGroup(groupToDeleteFrom as string, getTabFromTabGroups(tabToDelete as string) as Tab);
+
+    return true;
+}
+
 function getAllOpenTabNamesFromTabGroups(): (string | undefined)[] {
     let tabgroups = window.tabGroups.all;
     let groupTabs = tabgroups.map(tabGroup => tabGroup.tabs);

@@ -81,6 +81,14 @@
       {
         "command": "tab-groups.createGroup",
         "title": "tab-groups: Create Group"
+      },
+      {
+        "command": "tab-groups.deleteGroup",
+        "title": "tab-groups: Delete Group"
+      },
+      {
+        "command": "tab-groups.deleteTabFromGroup",
+        "title": "tab-groups: Delete Tab From Group"
       }
     ],
     "configuration": [

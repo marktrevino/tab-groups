@@ -91,6 +91,28 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
         this.groups[groupName] = { isActive: false, viewColumn: 1, tabs: [], activeTab: undefined};
         this._onDidChangeTreeData.fire();
     }
+
+    /**
+     * Deletes the selected group
+     * @param groupName 
+     */    
+    deleteGroup(groupName: string): void {
+        if (!this.groups){
+            this.addEmptyGroup('No groups yet');
+        }
+        delete this.groups[groupName];
+        this._onDidChangeTreeData.fire();
+    }
+
+    /**
+     * Deletes the file from selected group
+     * @param groupName
+     * @param tabName
+    */
+    deleteTabFromGroup(groupName: string, tabName: Tab): void {
+        this.groups[groupName].tabs = this.groups[groupName].tabs?.filter(tab => tab.label !== tabName.label);
+        this._onDidChangeTreeData.fire();
+    }
 }
 
 export class Group extends TreeItem {
