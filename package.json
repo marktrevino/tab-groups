@@ -15,7 +15,7 @@
     "viewsWelcome": [
       {
         "view": "tab-groups",
-        "contents": "No saved tab groups.\n[Save current tabs as a group](command:tab-groups.helloWorld)"
+        "contents": "No saved tab groups.\n[Create a group](command:tab-groups.createGroup)"
       }
     ],
     "viewsContainers": {
@@ -39,22 +39,48 @@
         }
       ]
     },
+    "menus": {
+      "view/title": [
+        {
+          "command": "tab-groups.saveGroup",
+          "when": "view == tab-groups"
+        },
+        {
+          "command": "tab-groups.createGroup",
+          "when": "view == tab-groups"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "tab-groups.helloWorld",
+          "when": "view == tab-groups && viewItem == filetreeitem"
+        },
+        { 
+          "command": "tab-groups.helloWorld",
+          "when": "view == explorer && viewItem == grouptreeitem"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "tab-groups.helloWorld",
-        "title": "Hello World"
+        "title": "tab-groups: Hello World"
       },
       {
         "command": "tab-groups.saveGroup",
-        "title": "Save Group"
+        "title": "tab-groups: Save Group"
       },
       {
         "command": "tab-groups.addToGroup",
-        "title": "Add to Group"
+        "title": "tab-groups: Add to Group"
       },
       {
         "command": "tab-groups.openFile",
-        "title": "Open File"
+        "title": "tab-groups: Open File"
+      },
+      {
+        "command": "tab-groups.createGroup",
+        "title": "tab-groups: Create Group"
       },
       {
         "command": "tab-groups.deleteGroup",
