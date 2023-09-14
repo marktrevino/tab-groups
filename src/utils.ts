@@ -1,68 +1,6 @@
 import { Tab, Uri, window, workspace } from "vscode";
-import { GroupProvider } from "./models/GroupProvider";
-import { FileTreeItem } from "./models/FileTreeItem";
-
-export async function createGroup(groupProvider: GroupProvider): Promise<boolean> {
-    let name = await window.showInputBox({
-        placeHolder: 'Please enter a name for the group'
-    });
-
-    if (name === undefined) { return false; }
-
-    groupProvider.addEmptyGroup(name);
-
-    return true;
-}
-
-export async function saveGroup(groupProvider: GroupProvider): Promise<boolean> {
-    let name = await window.showInputBox({
-        placeHolder: 'Please enter a name for the group'    
-    });
-
-    if (name === undefined) { return false; }
-
-    window.tabGroups.all.map(group => {
-        groupProvider.add(name as string, group);
-        // TODO (marktrevino): PREVENT GROUPS FROM BEING OVERWRITTEN WHEN SPLIT VIEW IS USED
-    });
-
-    return true;
-}
-
-export async function addToGroup(groupProvider: GroupProvider): Promise<boolean> {
-    let openTabs = getAllOpenTabNamesFromTabGroups() as string[];
-
-    if (openTabs.length === 0) { return false; } 
-
-    let tabToAdd = await window.showQuickPick(openTabs, {
-        placeHolder: 'Please select the file you would like to add to a group',
-    });
-
-    if(Object.keys(groupProvider.groups).length === 0) {
-        let groupName = await window.showInputBox({
-            placeHolder: 'You dont have any groups yet, please enter a name for a new group'
-        });
-        if (groupName === undefined) { return false; }
-        groupProvider.addEmptyGroup(groupName as string);
-
-        groupProvider.addTabToGroup(groupName as string, getTabFromTabGroups(tabToAdd as string) as Tab);
-
-        return true;
-    }
-
-    let groupNames = [];
-    for (let key in groupProvider.groups) {
-        groupNames.push(key);
-    }
-
-    let groupToAddTo = await window.showQuickPick(groupNames, {
-        placeHolder: 'Please select the group you would like to add the file to'
-    });
-
-    groupProvider.addTabToGroup(groupToAddTo as string, getTabFromTabGroups(tabToAdd as string) as Tab);
-    
-    return true;
-}
+import FileTreeItem from "./models/FileTreeItem";
+import CustomTabGroup from "./models/CustomTabGroup";
 
 export async function openFile(item: FileTreeItem): Promise<void> {
     const tab = item.getData() as Tab;
@@ -95,13 +33,13 @@ export async function openFile(item: FileTreeItem): Promise<void> {
 
 }
 
-function getAllOpenTabNamesFromTabGroups(): (string | undefined)[] {
+export function getAllOpenTabNamesFromTabGroups(): (string | undefined)[] {
     let tabgroups = window.tabGroups.all;
     let groupTabs = tabgroups.map(tabGroup => tabGroup.tabs);
     return groupTabs.map(tabArray => tabArray?.map(tab => tab.label)).flat();
 }
 
-function getTabFromTabGroups(tabString: string): Tab | undefined {
+export function getTabFromTabGroups(tabString: string): Tab | undefined {
     let tabGroupsArray = window.tabGroups.all;
     let tabGroups = tabGroupsArray.map(tabGroup => tabGroup.tabs);
     let tab = tabGroups.find(tabArray => tabArray?.find(tab => tab.label === tabString))?.find(tab => tab.label === tabString);

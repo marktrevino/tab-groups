@@ -2,8 +2,7 @@ import { TabGroup, Tab, TreeItem, TreeItemCollapsibleState } from "vscode";
 
 type TreeItemData = TabGroup | Tab;
 
-export class CustomTreeItem extends TreeItem {
-    protected tracking?: boolean;
+export default class CustomTreeItem extends TreeItem {
     private parent?: CustomTreeItem;
 
     constructor(
@@ -11,15 +10,13 @@ export class CustomTreeItem extends TreeItem {
         public readonly collapsibleState: TreeItemCollapsibleState,
         protected data: TreeItemData, 
         extra?: { 
-            parent?: CustomTreeItem, 
-            tracking?: boolean
+            parent?: CustomTreeItem
         }
     ) {
         super(label, collapsibleState);
         this.tooltip = `${this.label}`;
         this.data = data;
         this.parent = extra?.parent;
-        this.tracking = extra?.tracking;
     }
 
     getCollapsibleState() {

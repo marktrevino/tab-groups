@@ -1,23 +1,22 @@
-import { 
-    Command,
+import {
     EventEmitter,
     Event,
     TreeDataProvider,
     TreeItem,
-    TreeItemCollapsibleState,
     ProviderResult,
-    TabGroup,
-    Tab
+    Tab as VSCodeTab,
+    window
 } from 'vscode';
-import * as path from 'path';
-import { CustomTreeItem } from './CustomTreeItem';
+import CustomTreeItem from './CustomTreeItem';
 import { commandNames } from '../constants';
-import { GroupTreeItem } from './GroupTreeItem';
-import { FileTreeItem } from './FileTreeItem';
+import GroupTreeItem from './GroupTreeItem';
+import FileTreeItem from './FileTreeItem';
+
+import { getAllOpenTabNamesFromTabGroups, getTabFromTabGroups } from '../utils';
+import CustomTabGroup from './CustomTabGroup';
 
 export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
-    groups: { [key: string]: TabGroup };
-    private _tracking: string = '';
+    groups: { [key: string]: CustomTabGroup };
 
     private _onDidChangeTreeData: EventEmitter<CustomTreeItem | undefined | void> = new EventEmitter<CustomTreeItem | undefined | void>();
     readonly onDidChangeTreeData: Event<CustomTreeItem | undefined | void> = this._onDidChangeTreeData.event;
@@ -52,7 +51,7 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
     getChildren(element?: CustomTreeItem): Thenable<CustomTreeItem[] | undefined> {
         if (element === undefined) {
             return Promise.resolve(Object.keys(this.groups).sort((a, b) => a.localeCompare(b)).map(
-                name => new GroupTreeItem(this.groups[name] as TabGroup, name, this._tracking === name)));
+                name => new GroupTreeItem(this.groups[name] as CustomTabGroup, name)));
         }
 
         if(element instanceof GroupTreeItem) {
@@ -63,12 +62,20 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
         return Promise.resolve([]);
     }
 
+    getGroupNames (): string[] { 
+        return Object.keys(this.groups);
+    }
+
+    getGroupTabs (groupName: string): VSCodeTab[] | undefined { 
+        return this.groups[groupName].tabs;
+    }
+
     /**
      * Adds a group with tabs to the tree view
      * @param groupName the name of the group
      * @param tabs the tabs to add
      */
-    add(groupName: string, tabs: TabGroup): void {
+    add(groupName: string, tabs: CustomTabGroup): void {
         this.groups[groupName] = tabs;
         this._onDidChangeTreeData.fire();
     }
@@ -78,7 +85,7 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
      * @param groupName the name of the group
      * @param tab the tab to add
      */
-    addTabToGroup(groupName: string, tab: Tab): void {
+    addToGroup(groupName: string, tab: VSCodeTab): void {
         this.groups[groupName].tabs?.push(tab);
         this._onDidChangeTreeData.fire();
     }
@@ -91,22 +98,66 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
         this.groups[groupName] = { isActive: false, viewColumn: 1, tabs: [], activeTab: undefined};
         this._onDidChangeTreeData.fire();
     }
-}
 
-export class Group extends TreeItem {
-
-    constructor(
-        public readonly label: string,
-        public readonly collapsibleState: TreeItemCollapsibleState,
-        public readonly command?: Command
-    ) {
-        super(label, collapsibleState);
+    async addAllOpenTabsToGroup(): Promise<boolean> {
+        let name = await window.showInputBox({
+            placeHolder: 'Please enter a name for the group'    
+        });
+    
+        if (name === undefined) { return false; }
+    
+        window.tabGroups.all.map(group => {
+            this.add(name as string, group);
+            // TODO (marktrevino): PREVENT GROUPS FROM BEING OVERWRITTEN WHEN SPLIT VIEW IS USED
+        });
+    
+        return true;
     }
 
-    iconPath = {
-        light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
-        dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
-    };
+    async addTabToGroup(): Promise<boolean> {
+        let openTabs = getAllOpenTabNamesFromTabGroups() as string[];
 
-    contextValue = 'dependency';
+        if (openTabs.length === 0) { return false; } 
+
+        let tabToAdd = await window.showQuickPick(openTabs, {
+            placeHolder: 'Please select the file you would like to add to a group',
+        });
+
+        if(Object.keys(this.groups).length === 0) {
+            let groupName = await window.showInputBox({
+                placeHolder: 'You dont have any groups yet, please enter a name for a new group'
+            });
+            if (groupName === undefined) { return false; }
+            this.addEmptyGroup(groupName as string);
+
+            this.addToGroup(groupName as string, getTabFromTabGroups(tabToAdd as string) as VSCodeTab);
+
+            return true;
+        }
+
+        let groupNames = [];
+        for (let key in this.groups) {
+            groupNames.push(key);
+        }
+
+        let groupToAddTo = await window.showQuickPick(groupNames, {
+            placeHolder: 'Please select the group you would like to add the file to'
+        });
+
+        this.addToGroup(groupToAddTo as string, getTabFromTabGroups(tabToAdd as string) as VSCodeTab);
+        
+        return true;
+    }
+
+    async createGroup(): Promise<boolean> {
+        let name = await window.showInputBox({
+            placeHolder: 'Please enter a name for the group'
+        });
+    
+        if (name === undefined) { return false; }
+    
+        this.addEmptyGroup(name);
+    
+        return true;
+    }
 }

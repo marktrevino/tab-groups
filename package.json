@@ -42,7 +42,7 @@
     "menus": {
       "view/title": [
         {
-          "command": "tab-groups.saveGroup",
+          "command": "tab-groups.addAllOpenTabsToGroup",
           "when": "view == tab-groups"
         },
         {
@@ -67,8 +67,8 @@
         "title": "tab-groups: Hello World"
       },
       {
-        "command": "tab-groups.saveGroup",
-        "title": "tab-groups: Save Group"
+        "command": "tab-groups.addAllOpenTabsToGroup",
+        "title": "tab-groups: Add All Open Tabs To Group"
       },
       {
         "command": "tab-groups.addToGroup",
