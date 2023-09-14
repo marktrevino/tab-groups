@@ -8,11 +8,11 @@ import {
     window
 } from 'vscode';
 import CustomTreeItem from './CustomTreeItem';
-import { commandNames } from '../constants';
+import { commandNames, extensionName } from '../constants';
 import GroupTreeItem from './GroupTreeItem';
 import FileTreeItem from './FileTreeItem';
 
-import { getAllOpenTabNamesFromTabGroups, getTabFromTabGroups } from '../utils';
+import { getAllOpenTabNamesFromVSCode, getTabFromTabGroups, isAnyTabsOpenInVSCode, isStringEmptyOrNull } from '../utils';
 import CustomTabGroup from './CustomTabGroup';
 
 export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
@@ -27,13 +27,6 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
 
     getTreeItem(element: CustomTreeItem): TreeItem {
         const item = new TreeItem(element.getText(), element.getCollapsibleState());
-        if(element instanceof GroupTreeItem) {
-            item.command = {
-                command: commandNames.openFile,
-                title: 'Restore Group',
-                arguments: [element],
-            };
-        }
         if(element instanceof FileTreeItem) {
             item.command = {
                 command: commandNames.openFile,
@@ -100,11 +93,16 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
     }
 
     async addAllOpenTabsToGroup(): Promise<boolean> {
+        isAnyTabsOpenInVSCode();
+
         let name = await window.showInputBox({
             placeHolder: 'Please enter a name for the group'    
         });
     
-        if (name === undefined) { return false; }
+        if (isStringEmptyOrNull(name)) {
+            window.showErrorMessage(extensionName + ': Please enter a valid group name');
+            return false;
+        }
     
         window.tabGroups.all.map(group => {
             this.add(name as string, group);
@@ -115,7 +113,8 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
     }
 
     async addTabToGroup(): Promise<boolean> {
-        let openTabs = getAllOpenTabNamesFromTabGroups() as string[];
+        isAnyTabsOpenInVSCode();
+        let openTabs = getAllOpenTabNamesFromVSCode() as string[];
 
         if (openTabs.length === 0) { return false; } 
 

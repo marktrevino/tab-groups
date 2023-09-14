@@ -1,6 +1,7 @@
 import { Tab, Uri, window, workspace } from "vscode";
 import FileTreeItem from "./models/FileTreeItem";
 import CustomTabGroup from "./models/CustomTabGroup";
+import { extensionName } from "./constants";
 
 export async function openFile(item: FileTreeItem): Promise<void> {
     const tab = item.getData() as Tab;
@@ -33,10 +34,24 @@ export async function openFile(item: FileTreeItem): Promise<void> {
 
 }
 
-export function getAllOpenTabNamesFromTabGroups(): (string | undefined)[] {
+export function isTabInGroup(tab: Tab, group: CustomTabGroup): boolean {
+    return group.tabs?.includes(tab) ?? false;
+}
+
+export function getAllOpenTabNamesFromVSCode(): (string | undefined)[] {
     let tabgroups = window.tabGroups.all;
     let groupTabs = tabgroups.map(tabGroup => tabGroup.tabs);
     return groupTabs.map(tabArray => tabArray?.map(tab => tab.label)).flat();
+}
+
+export function isAnyTabsOpenInVSCode(): boolean {
+    let openTabs = getAllOpenTabNamesFromVSCode() as string[];
+
+    if (openTabs.length === 0) { 
+        window.showErrorMessage(extensionName + ': You don\'t have any tabs open!');
+        return false;
+    }
+    return true; 
 }
 
 export function getTabFromTabGroups(tabString: string): Tab | undefined {
@@ -44,4 +59,8 @@ export function getTabFromTabGroups(tabString: string): Tab | undefined {
     let tabGroups = tabGroupsArray.map(tabGroup => tabGroup.tabs);
     let tab = tabGroups.find(tabArray => tabArray?.find(tab => tab.label === tabString))?.find(tab => tab.label === tabString);
     return tab;
+}
+
+export function isStringEmptyOrNull(str: string | undefined): boolean {
+    return str === undefined || str.length === 0;
 }

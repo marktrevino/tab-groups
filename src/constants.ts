@@ -5,3 +5,5 @@ export const commandNames = {
     openFile: 'tab-groups.openFile',
     createGroup: 'tab-groups.createGroup'
 };
+
+export const extensionName = 'tab-groups';
