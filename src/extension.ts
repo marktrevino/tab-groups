@@ -24,7 +24,10 @@ export function activate(context: ExtensionContext) {
         commands.registerCommand(commandNames.save, () => saveGroup(groupProvider)),
         commands.registerCommand(commandNames.createGroup, () => createGroup(groupProvider)),
         commands.registerCommand(commandNames.addToGroup, () => addToGroup(groupProvider)),
-        commands.registerCommand(commandNames.openFile, async (item: FileTreeItem) => openFile(item))
+        commands.registerCommand(commandNames.openFile, async (item: FileTreeItem) => openFile(item)),
+        commands.registerCommand(commandNames.deleteGroup, () => deleteGroup(groupProvider)),
+        commands.registerCommand(commandNames.deleteTabFromGroup, async () => deleteTabFromGroup(groupProvider)),
+        commands.registerCommand(commandNames.editEntry, (node: any) => window.showInformationMessage(`Successfully called edit entry on ${node.label}.`))
     ];
 
     context.subscriptions.concat(disposable);

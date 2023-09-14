@@ -42,6 +42,15 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
                 arguments: [element],
             };
         }
+
+        // if (element instanceof FileType.File) {
+        //     item.command = {
+        //         command: commandNames.openFile,
+        //         title: 'Open file',
+        //         arguments: [element.uri],
+        //     };
+		// 	item.contextValue = 'file';
+        // }
         return item;
     }
 
@@ -90,6 +99,31 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
     addEmptyGroup(groupName: string): void {
         this.groups[groupName] = { isActive: false, viewColumn: 1, tabs: [], activeTab: undefined};
         this._onDidChangeTreeData.fire();
+    }
+
+    /**
+     * Deletes the selected group
+     * @param groupName 
+     */    
+    deleteGroup(groupName: string): void {
+        if (!this.groups){
+            this.addEmptyGroup('No groups yet');
+        }
+        delete this.groups[groupName];
+        this._onDidChangeTreeData.fire();
+    }
+
+    /**
+     * Deletes the file from selected group
+     * @param groupName
+     * @param tabName
+    */
+    deleteTabFromGroup(groupName: string, tabName: any): void {
+        if(this.groups[groupName].tabs)
+        {
+            this.groups[groupName].tabs = this.groups[groupName].tabs?.filter(tab => tab.label !== tabName.label);
+            this._onDidChangeTreeData.fire();
+        }
     }
 }
 
