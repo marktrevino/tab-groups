@@ -1,7 +1,7 @@
-import { commands, window, ExtensionContext, workspace } from 'vscode';
+import { commands, window, ExtensionContext, workspace, Tab } from 'vscode';
 import { commandNames } from './constants';
 import { GroupProvider } from './models/GroupProvider';
-import { addToGroup, createGroup, openFile, saveGroup } from './utils';
+import { addToGroup, createGroup, openFile, saveGroup, deleteGroup, deleteTabFromGroup } from './utils';
 import { FileTreeItem } from './models/FileTreeItem';
 
 // This method is called when your extension is activated
@@ -24,7 +24,9 @@ export function activate(context: ExtensionContext) {
         commands.registerCommand(commandNames.save, () => saveGroup(groupProvider)),
         commands.registerCommand(commandNames.createGroup, () => createGroup(groupProvider)),
         commands.registerCommand(commandNames.addToGroup, () => addToGroup(groupProvider)),
-        commands.registerCommand(commandNames.openFile, async (item: FileTreeItem) => openFile(item))
+        commands.registerCommand(commandNames.openFile, async (item: FileTreeItem) => openFile(item)),
+        commands.registerCommand(commandNames.deleteGroup, () => deleteGroup(groupProvider)),
+        commands.registerCommand(commandNames.deleteTabFromGroup, async () => deleteTabFromGroup(groupProvider)),
     ];
 
     context.subscriptions.concat(disposable);
