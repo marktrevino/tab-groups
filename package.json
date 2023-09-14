@@ -83,10 +83,6 @@
         "title": "tab-groups: Create Group"
       },
       {
-        "command": "tab-groups.deleteGroup",
-        "title": "Delete"
-      },
-      {
 				"command": "tab-groups.editEntry",
 				"title": "Edit",
 				"icon": {
@@ -94,10 +90,6 @@
 					"dark": "assets/dark/edit.svg"
 				}
 			},
-      {
-        "command": "tab-groups.deleteTabFromGroup",
-        "title": "Delete2"
-      }
     ],
     "configuration": [
       {

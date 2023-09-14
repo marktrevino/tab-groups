@@ -1,4 +1,4 @@
-import { TabGroup, Tab, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { TabGroup, Tab, TreeItem, TreeItemCollapsibleState, Uri, FileType} from "vscode";
 
 type TreeItemData = TabGroup | Tab;
 
@@ -8,6 +8,8 @@ export class CustomTreeItem extends TreeItem {
 
     constructor(
         public readonly label: string,
+        public readonly uri: Uri,
+        public readonly type: FileType,
         public readonly collapsibleState: TreeItemCollapsibleState,
         protected data: TreeItemData, 
         extra?: { 

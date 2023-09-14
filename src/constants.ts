@@ -3,5 +3,6 @@ export const commandNames = {
     save: 'tab-groups.saveGroup',
     addToGroup: 'tab-groups.addToGroup',
     openFile: 'tab-groups.openFile',
-    createGroup: 'tab-groups.createGroup'
+    createGroup: 'tab-groups.createGroup',
+    editEntry: 'tab-groups.editEntry'
 };
