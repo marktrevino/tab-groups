@@ -1,7 +1,9 @@
 export const commandNames = {
     helloWorld: 'tab-groups.helloWorld',
-    save: 'tab-groups.saveGroup',
+    addAllOpenTabsToGroup: 'tab-groups.addAllOpenTabsToGroup',
     addToGroup: 'tab-groups.addToGroup',
     openFile: 'tab-groups.openFile',
     createGroup: 'tab-groups.createGroup'
 };
+
+export const extensionName = 'tab-groups';
