@@ -11,7 +11,8 @@ import {
     FileChangeType,
     FileType,
     FileSystemError,
-    TabGroup
+    TabGroup,
+    Disposable
 } from 'vscode';
 import CustomTreeItem from './CustomTreeItem';
 import { commandNames, extensionName } from '../constants';
@@ -43,13 +44,13 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
     }
 
     // Watch that submits the command event and file description
-    watch(uri: Uri, options: { recursive: boolean; excludes: string[]; }): .Disposable {
+    watch(uri: Uri, options: { recursive: boolean; excludes: string[]; }): Disposable {
 		const watcher = fs.watch(uri.fsPath, { recursive: options.recursive }, async (event, filename) => {
 			if (filename) {
-				const filepath = join(uri.fsPath, _.normalizeNFC(filename.toString()));
+				const filepath = join(uri.fsPath, filename);
 
 				this._onDidChangeData.fire([{
-					type: event === 'change' ? FileChangeType.Changed : await _.exists(filepath) ? FileChangeType.Created : FileChangeType.Deleted,
+					type: event === 'change' ? FileChangeType.Changed : await filepath ? FileChangeType.Created : FileChangeType.Deleted,
 					uri: uri.with({ path: filepath })
 				} as FileChangeEvent]);
 			}
@@ -111,7 +112,7 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
         if(element instanceof GroupTreeItem) {
             const name = (element as GroupTreeItem).getText();
             const group = this.groups[name];
-            return Promise.resolve(group?.tabs?.map(tab => new FileTreeItem(tab, tab.label, Uri.parse(''), FileType.File, element as GroupTreeItem))));
+            return Promise.resolve(group?.tabs?.map(tab => new FileTreeItem(tab, tab.label, Uri.parse(''), FileType.File, element as GroupTreeItem)));
         }
         return Promise.resolve([]);
     }
@@ -145,7 +146,7 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
             return;
         }
         this.groups[groupName].tabs?.push(tab);
-        this._onDidChangeTreeData.fire();
+        // this._onDidChangeData();
     }
 
     /**
@@ -154,7 +155,7 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
      */
     addEmptyGroup(groupName: string): void {
         this.groups[groupName] = { isActive: false, viewColumn: 1, tabs: [], activeTab: undefined};
-        this._onDidChangeTreeData.fire();
+        // this.onDidChangeData();
     }
 
     async addAllOpenTabsToGroup(): Promise<boolean> {
@@ -170,7 +171,7 @@ export class GroupProvider implements TreeDataProvider<CustomTreeItem> {
         }
     
         window.tabGroups.all.map(group => {
-            this.add(name as string, group);
+            this.add(name as string, group as CustomTabGroup);
             // TODO (marktrevino): PREVENT GROUPS FROM BEING OVERWRITTEN WHEN SPLIT VIEW IS USED
         });
     
